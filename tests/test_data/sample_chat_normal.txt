@@ -1,0 +1,8 @@
+Kaeufer: Hallo, ist der Schreibtisch noch verfuegbar?
+Verkaeufer: Ja, der steht noch. Wollen Sie vorbeikommen und ihn sich anschauen?
+Kaeufer: Gerne! Wann wuerde es bei Ihnen passen?
+Verkaeufer: Morgen Nachmittag ab 14 Uhr waere gut.
+Kaeufer: Perfekt, dann komme ich gegen 15 Uhr vorbei. Ist der Preis verhandelbar?
+Verkaeufer: Ein bisschen Spielraum ist da. Wir koennen das vor Ort besprechen.
+Kaeufer: Super, bis morgen dann!
+Verkaeufer: Alles klar, bis morgen. Ich schick Ihnen noch die Adresse.

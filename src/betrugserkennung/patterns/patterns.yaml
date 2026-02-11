@@ -1,0 +1,148 @@
+# Betrugsmuster-Datenbank fuer Kleinanzeigen
+# Jedes Muster beschreibt eine bekannte Betrugsmasche mit Schluesselwoertern und Indikatoren.
+
+patterns:
+  - id: payment_outside_platform
+    name: "Zahlung ausserhalb der Plattform"
+    description: "Verkaeufer draengt auf Zahlung per Bankueberweisung, PayPal Freunde, Krypto oder andere nicht geschuetzte Methoden."
+    severity: high
+    keywords:
+      - "Bankueberweisung"
+      - "PayPal Freunde"
+      - "Freunde und Familie"
+      - "Krypto"
+      - "Bitcoin"
+      - "ausserhalb von Kleinanzeigen"
+      - "direkt ueberweisen"
+      - "Vorkasse"
+    indicators:
+      - "Verlangt Zahlungsmethode ohne Kaeuferschutz"
+      - "Lehnt Kleinanzeigen-Bezahlfunktion ab"
+
+  - id: urgency_pressure
+    name: "Zeitdruck erzeugen"
+    description: "Betrueger erzeugt kuenstlichen Zeitdruck, damit Kaeufer nicht nachdenken kann."
+    severity: medium
+    keywords:
+      - "schnell"
+      - "sofort"
+      - "heute noch"
+      - "andere Interessenten"
+      - "wird gleich weg sein"
+      - "letztes Stueck"
+      - "muss heute raus"
+    indicators:
+      - "Druck zur schnellen Entscheidung"
+      - "Erwaehnung anderer Interessenten"
+
+  - id: too_good_to_be_true
+    name: "Zu gut um wahr zu sein"
+    description: "Preis liegt deutlich unter dem Marktwert – typisches Lockmittel."
+    severity: medium
+    keywords:
+      - "Schnaeppchen"
+      - "weit unter Preis"
+      - "muss schnell weg"
+      - "Umzug"
+      - "Notverkauf"
+    indicators:
+      - "Preis 30%+ unter vergleichbaren Angeboten"
+      - "Ungewoehnlich niedriger Preis fuer Zustand"
+
+  - id: triangle_fraud
+    name: "Dreiecksbetrug"
+    description: "Betrueger schaltet sich zwischen Kaeufer und echten Verkaeufer – Ware wird mit gestohlenen Daten bezahlt."
+    severity: high
+    keywords:
+      - "schon versendet"
+      - "Tracking-Nummer"
+      - "DHL Paket"
+      - "Paket ist unterwegs"
+    indicators:
+      - "Behauptet Versand vor Zahlungsbestaetigung"
+      - "Tracking-Nummer von Drittpartei"
+
+  - id: phishing_link
+    name: "Phishing-Link"
+    description: "Betrueger sendet Link zu gefaelschter Seite (z.B. falsche Kleinanzeigen-Bezahlseite)."
+    severity: critical
+    keywords:
+      - "Link"
+      - "hier klicken"
+      - "Bezahlung abschliessen"
+      - "sicher-pay"
+      - "kleinanzeigen-pay"
+      - "verify"
+    indicators:
+      - "Externer Link in Chatnachricht"
+      - "URL sieht Kleinanzeigen aehnlich, ist es aber nicht"
+
+  - id: contact_outside_platform
+    name: "Kommunikation ausserhalb der Plattform"
+    description: "Betrueger will Kommunikation auf WhatsApp, Telegram oder E-Mail verlagern – weg von Kleinanzeigen."
+    severity: medium
+    keywords:
+      - "WhatsApp"
+      - "Telegram"
+      - "E-Mail"
+      - "Handynummer"
+      - "schreib mir auf"
+      - "lieber per"
+    indicators:
+      - "Will Plattform-Chat verlassen"
+      - "Fragt nach Telefonnummer oder E-Mail"
+
+  - id: fake_shipping
+    name: "Gefaelschter Versand"
+    description: "Verkaeufer behauptet Ware versendet zu haben, hat es aber nicht – oder sendet leeres Paket."
+    severity: high
+    keywords:
+      - "bereits versendet"
+      - "Paket muesste ankommen"
+      - "Sendungsverfolgung kommt noch"
+      - "DHL hat Probleme"
+    indicators:
+      - "Keine gueltige Sendungsnummer"
+      - "Versandbehauptung ohne Nachweis"
+
+  - id: identity_theft
+    name: "Identitaetsdiebstahl"
+    description: "Betrueger fragt nach persoenlichen Daten (Ausweis, Bankdaten) unter einem Vorwand."
+    severity: critical
+    keywords:
+      - "Ausweis"
+      - "Personalausweis"
+      - "Verifizierung"
+      - "Identitaet bestaetigen"
+      - "Kontonummer"
+      - "IBAN"
+    indicators:
+      - "Fragt nach Ausweiskopie"
+      - "Verlangt Bankdaten zur angeblichen Verifizierung"
+
+  - id: advance_payment
+    name: "Anzahlung / Reservierung"
+    description: "Verkaeufer verlangt Anzahlung oder Reservierungsgebuehr bevor Ware gesehen wurde."
+    severity: high
+    keywords:
+      - "Anzahlung"
+      - "Reservierung"
+      - "kleine Gebuehr"
+      - "Kaution"
+      - "vorab ueberweisen"
+    indicators:
+      - "Geld vor Warenerhhalt gefordert"
+      - "Reservierungsgebuehr bei Privatkauf unueblich"
+
+  - id: overpayment_scam
+    name: "Ueberzahlungsbetrug"
+    description: "Kaeufer zahlt absichtlich zu viel und bittet um Rueckueberweisung der Differenz."
+    severity: high
+    keywords:
+      - "zu viel ueberwiesen"
+      - "Differenz zurueck"
+      - "versehentlich mehr"
+      - "Rueckueberweisung"
+    indicators:
+      - "Bittet um Rueckzahlung nach Ueberzahlung"
+      - "Zahlung mit gestohlener Karte, Rueckforderung an Opfer"

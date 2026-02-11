@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venvScriptspip list)",
+      "Bash(powershell -NoProfile -Command:*)",
+      "Bash(git config:*)",
+      "mcp__filesystem__directory_tree",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(\"C:\\\\Users\\\\sanoj\\\\Documents\\\\Projekte\\\\Coding\\\\Python\\\\ScamDetection\\\\.venv\\\\Scripts\\\\python.exe\" --version)",
+      "Bash(git -C \"C:\\\\Users\\\\sanoj\\\\Documents\\\\Projekte\\\\Coding\\\\Python\\\\ScamDetection\" log --oneline --all)",
+      "Bash(.venv/Scripts/pip install:*)",
+      "Bash(.venv/Scripts/python -m pytest tests/ -v)",
+      "Bash(.venv/Scripts/ruff check src/ tests/)",
+      "Bash(.venv/Scripts/python -m pytest tests/ -v --tb=short)"
+    ]
+  }
+}
