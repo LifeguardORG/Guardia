@@ -1,4 +1,4 @@
-# Projektplan – betrugserkennung
+# Projektplan – Guardia
 
 ## 1. Vision & Ansprueche
 
