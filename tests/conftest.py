@@ -15,6 +15,6 @@ def sample_normal_chat() -> str:
 
 
 @pytest.fixture
-def sample_scam_chat() -> str:
+def sample_fraud_chat() -> str:
     """Gibt einen synthetischen Betrugschat zurueck."""
-    return (TEST_DATA_DIR / "sample_chat_scam.txt").read_text(encoding="utf-8")
+    return (TEST_DATA_DIR / "sample_chat_fraud.txt").read_text(encoding="utf-8")

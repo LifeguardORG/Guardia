@@ -3,10 +3,10 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from betrugserkennung.config.settings import LlmSettings
-from betrugserkennung.data.schemas import Chat, Message
-from betrugserkennung.llm.client import LlmResponse
-from betrugserkennung.llm.ollama_client import OllamaClient
+from guardia.config.settings import LlmSettings
+from guardia.data.schemas import Chat, Message
+from guardia.llm.client import LlmResponse
+from guardia.llm.ollama_client import OllamaClient
 
 
 def _make_test_chat() -> Chat:
@@ -23,7 +23,7 @@ def _make_test_chat() -> Chat:
     )
 
 
-def _make_mock_response(verdict: str = "scam", confidence: float = 0.9) -> MagicMock:
+def _make_mock_response(verdict: str = "fraud", confidence: float = 0.9) -> MagicMock:
     """Erstellt eine gemockte Ollama-Antwort."""
     response_json = json.dumps({
         "verdict": verdict,
@@ -39,23 +39,23 @@ def _make_mock_response(verdict: str = "scam", confidence: float = 0.9) -> Magic
 class TestOllamaClientAnalyze:
     """Tests fuer die analyze_chat-Methode."""
 
-    @patch("betrugserkennung.llm.ollama_client.ollama.Client")
-    def test_analyze_scam_chat(self, mock_client_class: MagicMock):
-        """Scam-Chat wird als 'scam' mit hoher Konfidenz erkannt."""
+    @patch("guardia.llm.ollama_client.ollama.Client")
+    def test_analyze_fraud_chat(self, mock_client_class: MagicMock):
+        """Betrugs-Chat wird als 'fraud' mit hoher Konfidenz erkannt."""
         mock_instance = MagicMock()
-        mock_instance.chat.return_value = _make_mock_response("scam", 0.9)
+        mock_instance.chat.return_value = _make_mock_response("fraud", 0.9)
         mock_client_class.return_value = mock_instance
 
         client = OllamaClient(LlmSettings())
         result = client.analyze_chat(_make_test_chat())
 
         assert isinstance(result, LlmResponse)
-        assert result.verdict == "scam"
+        assert result.verdict == "fraud"
         assert result.confidence == 0.9
         assert len(result.risk_factors) > 0
         assert "Bankueberweisung" in result.risk_factors
 
-    @patch("betrugserkennung.llm.ollama_client.ollama.Client")
+    @patch("guardia.llm.ollama_client.ollama.Client")
     def test_analyze_normal_chat(self, mock_client_class: MagicMock):
         """Normaler Chat wird als 'normal' erkannt."""
         mock_instance = MagicMock()
@@ -68,7 +68,7 @@ class TestOllamaClientAnalyze:
         assert result.verdict == "normal"
         assert result.confidence == 0.1
 
-    @patch("betrugserkennung.llm.ollama_client.ollama.Client")
+    @patch("guardia.llm.ollama_client.ollama.Client")
     def test_analyze_invalid_json(self, mock_client_class: MagicMock):
         """Bei ungueltigem JSON wird Fallback-Response zurueckgegeben."""
         mock_instance = MagicMock()
@@ -88,7 +88,7 @@ class TestOllamaClientAnalyze:
 class TestOllamaClientAvailability:
     """Tests fuer die is_available-Methode."""
 
-    @patch("betrugserkennung.llm.ollama_client.ollama.Client")
+    @patch("guardia.llm.ollama_client.ollama.Client")
     def test_server_available_model_found(self, mock_client_class: MagicMock):
         """Server erreichbar und Modell vorhanden → True."""
         mock_instance = MagicMock()
@@ -102,7 +102,7 @@ class TestOllamaClientAvailability:
         client = OllamaClient(LlmSettings())
         assert client.is_available() is True
 
-    @patch("betrugserkennung.llm.ollama_client.ollama.Client")
+    @patch("guardia.llm.ollama_client.ollama.Client")
     def test_server_available_model_missing(self, mock_client_class: MagicMock):
         """Server erreichbar aber Modell nicht installiert → False."""
         mock_instance = MagicMock()
@@ -116,7 +116,7 @@ class TestOllamaClientAvailability:
         client = OllamaClient(LlmSettings())
         assert client.is_available() is False
 
-    @patch("betrugserkennung.llm.ollama_client.ollama.Client")
+    @patch("guardia.llm.ollama_client.ollama.Client")
     def test_server_unreachable(self, mock_client_class: MagicMock):
         """Server nicht erreichbar → False."""
         mock_instance = MagicMock()
@@ -134,13 +134,13 @@ class TestParseResponse:
         """Vollstaendige JSON-Antwort wird korrekt geparst."""
         client = OllamaClient.__new__(OllamaClient)
         raw = json.dumps({
-            "verdict": "scam",
+            "verdict": "fraud",
             "confidence": 0.85,
             "reasoning": "Klar ein Betrug.",
             "risk_factors": ["IBAN", "Zeitdruck"],
         })
         result = client._parse_response(raw)
-        assert result.verdict == "scam"
+        assert result.verdict == "fraud"
         assert result.confidence == 0.85
         assert result.risk_factors == ["IBAN", "Zeitdruck"]
 
@@ -156,10 +156,10 @@ class TestParseResponse:
     def test_parse_confidence_clamping(self):
         """Confidence wird auf 0.0-1.0 begrenzt."""
         client = OllamaClient.__new__(OllamaClient)
-        raw = json.dumps({"verdict": "scam", "confidence": 5.0})
+        raw = json.dumps({"verdict": "fraud", "confidence": 5.0})
         result = client._parse_response(raw)
         assert result.confidence == 1.0
 
-        raw_neg = json.dumps({"verdict": "scam", "confidence": -0.5})
+        raw_neg = json.dumps({"verdict": "fraud", "confidence": -0.5})
         result_neg = client._parse_response(raw_neg)
         assert result_neg.confidence == 0.0

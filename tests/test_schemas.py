@@ -1,6 +1,6 @@
 """Tests fuer die Datenmodelle (Message, Chat, Label)."""
 
-from betrugserkennung.data.schemas import Chat, Label, LabeledChat, Message
+from guardia.data.schemas import Chat, Label, LabeledChat, Message
 
 
 def test_message_creation():
@@ -60,13 +60,13 @@ def test_chat_from_text_empty_lines():
 def test_label_enum():
     """Label-Enum hat die richtigen Werte."""
     assert Label.NORMAL.value == "normal"
-    assert Label.SCAM.value == "scam"
+    assert Label.FRAUD.value == "fraud"
     assert Label.UNKNOWN.value == "unknown"
 
 
 def test_labeled_chat():
     """LabeledChat hat ein Label-Feld."""
     messages = [Message(sender="Kaeufer", text="Test")]
-    chat = LabeledChat(messages=messages, label=Label.SCAM)
-    assert chat.label == Label.SCAM
+    chat = LabeledChat(messages=messages, label=Label.FRAUD)
+    assert chat.label == Label.FRAUD
     assert chat.message_count == 1

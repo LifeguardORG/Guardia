@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from betrugserkennung.config.settings import (
+from guardia.config.settings import (
     LlmSettings,
     Settings,
     load_settings,

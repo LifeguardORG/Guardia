@@ -8,7 +8,7 @@ Dieses Verzeichnis enthaelt die Laufzeitdaten. Alle Dateien hier (ausser `.gitke
 |--------------|-----------------------------------------------------|
 | `raw/`       | Rohe Chat-Exporte (Text, JSON, CSV)                 |
 | `processed/` | Aufbereitete und normalisierte Chats                |
-| `labeled/`   | Gelabelte Chats fuer Training (`normal` oder `scam`)|
+| `labeled/`   | Gelabelte Chats fuer Training (`normal` oder `fraud`)|
 
 ## Erwartetes Chat-Format
 
@@ -25,7 +25,7 @@ Jede Zeile: `Rolle: Nachricht`
 ### Gelabelte Daten
 
 Dateiname-Konvention: `{label}_{id}.txt`
-- `scam_001.txt` – Betrugschat
+- `fraud_001.txt` – Betrugschat
 - `normal_001.txt` – Normaler Chat
 
 ## Datenschutz

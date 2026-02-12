@@ -2,7 +2,7 @@
 
 ## 1. Vision & Ansprueche
 
-**Was wir bauen:** Eine KI-gestuetzte Scam-Erkennung fuer Kleinanzeigen-Chats.
+**Was wir bauen:** Eine KI-gestuetzte Betrugserkennung fuer Kleinanzeigen-Chats.
 
 **Ansprueche:**
 - 95% True-Positive-Rate bei Betrugschats
@@ -51,7 +51,7 @@ Die KI kombiniert beides:
 |-------|-------------------------------|------------------------------------------------------------|
 | 1     | LLM-Integration               | Ollama anbinden, Chat an LLM schicken, Antwort bekommen   |
 | 2     | Test-GUI                      | Einfache Oberflaeche: Chat eingeben, Ergebnis sehen       |
-| 3     | Scam-Methoden & Scraper       | Betrugsmaschen recherchieren, Daten automatisch sammeln    |
+| 3     | Betrugsmaschen & Scraper      | Betrugsmaschen recherchieren, Daten automatisch sammeln    |
 | 4     | Mustererkennung               | Pattern-DB + Matcher, Hybrid mit LLM verbinden            |
 | 5     | Detection Engine & Scoring    | Alles kombinieren zu einem Risiko-Score                    |
 | 6     | Training & Evaluation         | Datensatz-Pipeline, Metriken, 95%-Ziel erreichen          |
@@ -66,26 +66,26 @@ Die KI kombiniert beides:
 > Ziel: Ollama laeuft, wir koennen einen Chat-Text hinschicken und eine Analyse zurueckbekommen.
 > Minimale Infrastruktur (Config, Schemas) wird mitgebaut, soweit noetig.
 
-#### 1.1 Minimale Konfiguration (`src/betrugserkennung/config/`)
+#### 1.1 Minimale Konfiguration (`src/guardia/config/`)
 
 - [ ] **`settings.py`** – Pydantic `BaseSettings` fuer LLM-Verbindung
   - `LlmSettings`: `host`, `model`, `max_tokens`, `temperature`
   - Laedt aus `default.toml` und `.env`
 - [ ] **`default.toml`** pruefen – Ollama-Defaults muessen stimmen
 
-#### 1.2 Minimale Datenmodelle (`src/betrugserkennung/data/schemas.py`)
+#### 1.2 Minimale Datenmodelle (`src/guardia/data/schemas.py`)
 
 - [ ] **`Message`** Dataclass – `sender: str`, `text: str`, `timestamp: datetime | None`
 - [ ] **`Chat`** Dataclass – `messages: list[Message]`, `source_file: Path | None`, `metadata: dict`
 
-#### 1.3 LLM Client Interface (`src/betrugserkennung/llm/client.py`)
+#### 1.3 LLM Client Interface (`src/guardia/llm/client.py`)
 
 - [ ] **`LlmResponse`** Dataclass – `verdict: str`, `confidence: float`, `reasoning: str`, `risk_factors: list[str]`
 - [ ] **`BaseLlmClient`** Abstrakte Klasse (ABC)
   - `analyze_chat(chat: Chat) -> LlmResponse`
   - `is_available() -> bool`
 
-#### 1.4 Ollama Client (`src/betrugserkennung/llm/ollama_client.py`)
+#### 1.4 Ollama Client (`src/guardia/llm/ollama_client.py`)
 
 - [ ] **`OllamaClient(BaseLlmClient)`** implementieren
   - `__init__(settings: LlmSettings)`
@@ -94,7 +94,7 @@ Die KI kombiniert beides:
   - `_build_prompt(chat: Chat) -> str` – Prompt zusammenbauen
   - `_parse_response(raw: str) -> LlmResponse` – JSON-Antwort parsen
 
-#### 1.5 Prompt-Templates (`src/betrugserkennung/llm/prompts.py`)
+#### 1.5 Prompt-Templates (`src/guardia/llm/prompts.py`)
 
 - [ ] **`SYSTEM_PROMPT`** – "Du bist ein Experte fuer Betrugserkennung auf Kleinanzeigen..."
 - [ ] **`ANALYSIS_PROMPT_TEMPLATE`** – Chat-Text + gewuenschtes JSON-Output-Format
@@ -118,15 +118,15 @@ Die KI kombiniert beides:
 #### 2.1 GUI-Framework einrichten
 
 - [ ] **Abhaengigkeit hinzufuegen**: `gradio` oder `streamlit` in `pyproject.toml`
-- [ ] **`src/betrugserkennung/gui/`** Modul erstellen
+- [ ] **`src/guardia/gui/`** Modul erstellen
   - `__init__.py` – Docstring
 
-#### 2.2 Chat-Eingabe-Oberflaeche (`src/betrugserkennung/gui/app.py`)
+#### 2.2 Chat-Eingabe-Oberflaeche (`src/guardia/gui/app.py`)
 
 - [ ] **Chat-Textfeld** – Grosses Eingabefeld fuer kopierten Chat-Verlauf
 - [ ] **"Analysieren"-Button** – Sendet Chat an `OllamaClient.analyze_chat()`
 - [ ] **Ergebnis-Anzeige**:
-  - Verdict (Scam / Kein Scam) mit Farb-Indikator (rot/gruen)
+  - Verdict (Betrug / Kein Betrug) mit Farb-Indikator (rot/gruen)
   - Confidence-Score als Balken oder Prozentzahl
   - Begruendung des LLM (reasoning)
   - Erkannte Risikofaktoren als Liste
@@ -134,33 +134,33 @@ Die KI kombiniert beides:
 
 #### 2.3 Beispiel-Chats
 
-- [ ] **Vorlagen-Dropdown** – "Normaler Chat" und "Scam-Chat" als schnelle Test-Eingaben
-  - Laedt aus `tests/test_data/sample_chat_normal.txt` und `sample_chat_scam.txt`
+- [ ] **Vorlagen-Dropdown** – "Normaler Chat" und "Betrugs-Chat" als schnelle Test-Eingaben
+  - Laedt aus `tests/test_data/sample_chat_normal.txt` und `sample_chat_fraud.txt`
 
 #### 2.4 Startskript
 
-- [ ] **CLI-Kommando**: `betrugserkennung gui` – Startet die Weboberflaeche
-- [ ] **Oder**: `python -m betrugserkennung.gui.app` als Direktstart
+- [ ] **CLI-Kommando**: `guardia gui` – Startet die Weboberflaeche
+- [ ] **Oder**: `python -m guardia.gui.app` als Direktstart
 
 #### Erfolgskriterium Phase 2:
 > Browser oeffnet sich, Chat einfuegen, Button klicken → LLM-Analyse erscheint mit Verdict und Begruendung.
 
 ---
 
-### Phase 3: Scam-Methoden sammeln & Scraper
+### Phase 3: Betrugsmaschen sammeln & Scraper
 
 > Ziel: Systematisch Betrugsmaschen recherchieren und Daten sammeln.
 > Scraper baut eine Datenbank aus echten Betrugsberichten auf.
 
-#### 3.1 Scam-Methoden recherchieren & dokumentieren
+#### 3.1 Betrugsmaschen recherchieren & dokumentieren
 
-- [ ] **`src/betrugserkennung/patterns/patterns.yaml`** erweitern – Neue Muster aus Recherche
+- [ ] **`src/guardia/patterns/patterns.yaml`** erweitern – Neue Muster aus Recherche
   - Quellen: Verbraucherzentrale, Polizei-Warnungen, Reddit r/Kleinanzeigen, Betrugsberichte
   - Pro Muster: `id`, `name`, `description`, `severity`, `keywords`, `indicators`
 - [ ] **Ziel: mindestens 20-30 dokumentierte Betrugsmaschen** (aktuell 10)
   - Neue Kategorien: Fake-Spedition, Treuhand-Betrug, Account-Uebernahme, Fake-Bewertungen, Dreiecks-Masche mit gehackten Accounts, QR-Code-Betrug, etc.
 
-#### 3.2 Scraper-Modul (`src/betrugserkennung/scraper/`)
+#### 3.2 Scraper-Modul (`src/guardia/scraper/`)
 
 - [ ] **`__init__.py`** – Docstring
 - [ ] **`sources.py`** – Konfiguration der Scraping-Quellen
@@ -191,18 +191,18 @@ Die KI kombiniert beides:
 
 #### 3.4 CLI-Kommando fuer Scraping
 
-- [ ] **`betrugserkennung scrape`** Kommando
-  - `betrugserkennung scrape --source reddit` – Reddit scrapen
-  - `betrugserkennung scrape --source web` – Warnseiten scrapen
-  - `betrugserkennung scrape --all` – Alle Quellen
-  - `betrugserkennung scrape --extract-patterns` – Aus Berichten Muster extrahieren (mit LLM)
+- [ ] **`guardia scrape`** Kommando
+  - `guardia scrape --source reddit` – Reddit scrapen
+  - `guardia scrape --source web` – Warnseiten scrapen
+  - `guardia scrape --all` – Alle Quellen
+  - `guardia scrape --extract-patterns` – Aus Berichten Muster extrahieren (mit LLM)
 
 #### 3.5 Abhaengigkeiten
 
 - [ ] `pyproject.toml` erweitern: `requests`, `beautifulsoup4`, `praw` (optional) in `[project.optional-dependencies.scraper]`
 
 #### Erfolgskriterium Phase 3:
-> `betrugserkennung scrape --all` sammelt Berichte. `patterns.yaml` hat 20+ Muster. Gescrapte Daten liegen in `data/raw/`.
+> `guardia scrape --all` sammelt Berichte. `patterns.yaml` hat 20+ Muster. Gescrapte Daten liegen in `data/raw/`.
 
 ---
 
@@ -211,7 +211,7 @@ Die KI kombiniert beides:
 > Ziel: Betrugsmuster aus der YAML-DB werden systematisch gegen Chats gematcht.
 > Jetzt erst sinnvoll, weil wir ab Phase 3 genug Muster haben.
 
-#### 4.1 Pattern Registry (`src/betrugserkennung/patterns/registry.py`)
+#### 4.1 Pattern Registry (`src/guardia/patterns/registry.py`)
 
 - [ ] **`Pattern`** Dataclass – `id`, `name`, `description`, `severity`, `keywords`, `indicators`
 - [ ] **`PatternRegistry`** Klasse
@@ -221,14 +221,14 @@ Die KI kombiniert beides:
   - `get_by_severity(severity: str) -> list[Pattern]` – Nach Schweregrad
 - [ ] **Test: `tests/test_registry.py`**
 
-#### 4.2 Pattern Matcher (`src/betrugserkennung/patterns/matcher.py`)
+#### 4.2 Pattern Matcher (`src/guardia/patterns/matcher.py`)
 
 - [ ] **`PatternMatch`** Dataclass – `pattern`, `matched_keywords`, `matched_messages`, `confidence`
 - [ ] **`PatternMatcher`** Klasse
   - `match_chat(chat: Chat) -> list[PatternMatch]`
   - `match_message(message: Message, pattern: Pattern) -> bool`
   - `calculate_confidence(matches: int, total_keywords: int) -> float`
-- [ ] **Test: `tests/test_matcher.py`** – Scam-Chat matcht Muster, normaler Chat nicht
+- [ ] **Test: `tests/test_matcher.py`** – Betrugs-Chat matcht Muster, normaler Chat nicht
 
 #### 4.3 Patterns ins LLM-Prompt integrieren
 
@@ -241,7 +241,7 @@ Die KI kombiniert beides:
 - [ ] **Pattern-Verwaltung** – Einfache Liste aller Muster in der GUI ansehbar
 
 #### Erfolgskriterium Phase 4:
-> Scam-Testchat matcht mindestens 3 Muster. GUI zeigt Muster-Treffer neben LLM-Analyse an.
+> Betrugs-Testchat matcht mindestens 3 Muster. GUI zeigt Muster-Treffer neben LLM-Analyse an.
 
 ---
 
@@ -249,7 +249,7 @@ Die KI kombiniert beides:
 
 > Ziel: Muster-Ergebnisse und LLM-Analyse werden zu einem kombinierten Risiko-Score.
 
-#### 5.1 Detection Result (`src/betrugserkennung/detection/result.py`)
+#### 5.1 Detection Result (`src/guardia/detection/result.py`)
 
 - [ ] **`RiskLevel`** Enum – `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
 - [ ] **`DetectionResult`** Dataclass
@@ -260,7 +260,7 @@ Die KI kombiniert beides:
   - `summary: str`
   - `analyzed_at: datetime`
 
-#### 5.2 Scoring (`src/betrugserkennung/detection/scoring.py`)
+#### 5.2 Scoring (`src/guardia/detection/scoring.py`)
 
 - [ ] **`calculate_pattern_score(matches) -> float`** – Gewichtet nach Severity
   - `critical=1.0`, `high=0.8`, `medium=0.5`, `low=0.2`, normalisiert auf 0-1
@@ -270,7 +270,7 @@ Die KI kombiniert beides:
   - `<0.3` LOW, `<0.6` MEDIUM, `<0.85` HIGH, `>=0.85` CRITICAL
 - [ ] **Test: `tests/test_scoring.py`**
 
-#### 5.3 Analyzer (`src/betrugserkennung/detection/analyzer.py`)
+#### 5.3 Analyzer (`src/guardia/detection/analyzer.py`)
 
 - [ ] **`Analyzer`** Klasse – Orchestriert alles
   - `analyze(chat: Chat) -> DetectionResult`:
@@ -292,7 +292,7 @@ Die KI kombiniert beides:
 - [ ] **Risiko-Score als Ampel** in der GUI (gruen/gelb/orange/rot)
 - [ ] **Detailansicht**: Pattern-Matches + LLM-Analyse + Combined Score
 
-#### 5.6 CLI Kommandos (`src/betrugserkennung/cli/`)
+#### 5.6 CLI Kommandos (`src/guardia/cli/`)
 
 - [ ] **`main.py`** – Click-Gruppe mit `--config` und `--verbose`
 - [ ] **`commands.py`**:
@@ -305,7 +305,7 @@ Die KI kombiniert beides:
 - [ ] **Test: `tests/test_cli.py`**
 
 #### Erfolgskriterium Phase 5:
-> `betrugserkennung analyze sample_chat_scam.txt` → `CRITICAL`, Muster + LLM + Score. GUI zeigt Ampel.
+> `guardia analyze sample_chat_fraud.txt` → `CRITICAL`, Muster + LLM + Score. GUI zeigt Ampel.
 
 ---
 
@@ -313,20 +313,20 @@ Die KI kombiniert beides:
 
 > Ziel: System auf echten Daten evaluieren und optimieren. 95%-Ziel erreichen.
 
-#### 6.1 Datensatz-Aufbereitung (`src/betrugserkennung/training/dataset.py`)
+#### 6.1 Datensatz-Aufbereitung (`src/guardia/training/dataset.py`)
 
 - [ ] **`create_dataset(labeled_dir) -> Dataset`** – Train/Test Split (80/20, stratified)
 - [ ] **`Dataset`** Dataclass – `train`, `test`, `stats`
 - [ ] **`export_dataset_stats(dataset) -> dict`** – Statistiken
 
-#### 6.2 Trainer (`src/betrugserkennung/training/trainer.py`)
+#### 6.2 Trainer (`src/guardia/training/trainer.py`)
 
 - [ ] **`Trainer`** Klasse
   - `run(dataset) -> TrainingResult`
   - `optimize_thresholds(dataset) -> dict` – Beste Schwellenwerte finden
   - Speichert optimierte Config
 
-#### 6.3 Evaluation (`src/betrugserkennung/training/evaluate.py`)
+#### 6.3 Evaluation (`src/guardia/training/evaluate.py`)
 
 - [ ] **`evaluate(analyzer, test_data) -> EvaluationResult`** – TP, FP, TN, FN, Precision, Recall, F1
 - [ ] **`EvaluationResult`** Dataclass
@@ -336,12 +336,12 @@ Die KI kombiniert beides:
 #### 6.4 Daten sammeln & labeln
 
 - [ ] **100-200 Chats sammeln** (Scraper + manuell + Community)
-- [ ] **Labeln**: `scam_XXX.txt` / `normal_XXX.txt` in `data/labeled/`
+- [ ] **Labeln**: `fraud_XXX.txt` / `normal_XXX.txt` in `data/labeled/`
 - [ ] **Erste Evaluation** durchfuehren
 - [ ] **Iterativ optimieren**: Schwellenwerte, Prompts, Patterns anpassen bis 95% TP
 
 #### Erfolgskriterium Phase 6:
-> `betrugserkennung evaluate --data data/labeled/` zeigt >= 95% True Positive Rate.
+> `guardia evaluate --data data/labeled/` zeigt >= 95% True Positive Rate.
 
 ---
 
@@ -404,7 +404,7 @@ Die KI kombiniert beides:
 ```
 Phase 1: LLM-Integration        ████░░░░░░  Ollama anbinden, erster Chat → Analyse
 Phase 2: Test-GUI                ░░██░░░░░░  Weboberflaeche zum Testen
-Phase 3: Scam-Methoden+Scraper  ░░░░████░░  Muster recherchieren, Daten sammeln
+Phase 3: Betrugsmaschen+Scraper  ░░░░████░░  Muster recherchieren, Daten sammeln
 Phase 4: Mustererkennung         ░░░░░░██░░  Pattern-DB + Matcher
 Phase 5: Detection Engine        ░░░░░░░██░  Alles zusammen: Score + CLI + GUI
 Phase 6: Training & Eval         ░░░░░░░░██  Daten labeln, 95% erreichen

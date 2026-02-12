@@ -1,7 +1,7 @@
 """Tests fuer die Prompt-Templates."""
 
-from betrugserkennung.data.schemas import Chat, Message
-from betrugserkennung.llm.prompts import (
+from guardia.data.schemas import Chat, Message
+from guardia.llm.prompts import (
     SYSTEM_PROMPT,
     build_analysis_prompt,
     format_chat_for_prompt,
