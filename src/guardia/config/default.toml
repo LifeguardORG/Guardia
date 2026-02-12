@@ -1,0 +1,25 @@
+# Standard-Konfiguration fuer Guardia
+# Diese Werte koennen ueber Umgebungsvariablen oder .env ueberschrieben werden.
+
+[llm]
+# Ollama-Server Adresse
+host = "http://localhost:11434"
+# Modellname (muss in Ollama installiert sein)
+model = "llama3.1:8b"
+# Maximale Antwortlaenge in Tokens
+max_tokens = 1024
+# Temperatur (0.0 = deterministisch, 1.0 = kreativ)
+temperature = 0.1
+
+[detection]
+# Schwellenwert fuer Betrugs-Risiko (0.0 - 1.0)
+risk_threshold = 0.6
+# Gewichtung: Mustererkennung vs. LLM-Analyse (0.0 - 1.0)
+# 0.4 = 40% Muster, 60% LLM
+pattern_weight = 0.4
+
+[data]
+# Standardpfad fuer Chat-Daten
+raw_dir = "data/raw"
+processed_dir = "data/processed"
+labeled_dir = "data/labeled"
